@@ -1,5 +1,5 @@
 from django.db import models
-from promotions.models import Coupon
+from promotions.models import *
 
 
 # Create your models here.

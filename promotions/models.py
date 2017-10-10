@@ -3,25 +3,27 @@ from django.db import models
 
 
 # Create your models here.
+from clients.models import Client
+from users.models import Profile
 
 
 class Category(models.Model):
     name = models.CharField(max_length=64, blank=True, null=True, default=None)
     # can be null if it is top level category
-    category_one = models.ForeignKey('self', related_name="Category One")
+    category_one = models.ForeignKey('self', related_name="+")
 
     # can be null if it is top level category
-    category_two = models.ForeignKey('self', related_name="Category One")
+    category_two = models.ForeignKey('self', related_name="+")
 
     # can be null if it is top level category
-    category_three = models.ForeignKey('self', related_name="Category One")
+    category_three = models.ForeignKey('self', related_name="+")
 
     # active promotions nmb
     promotions_nmb = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
 
 class Promotion(models.Model):
-    client = models.ForeignKey('Client')
+    client = models.ForeignKey(Client)
     name = models.CharField(max_length=64, blank=True, null=True, default=None)
     description = models.TextField(blank=True, null=True, default=None)
     faq = models.TextField(blank=True, null=True, default=None)
@@ -29,7 +31,7 @@ class Promotion(models.Model):
     # coordinates in longtitude and latitude
     map = models.CharField(max_length=32, blank=True, null=True, default=None)
 
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey(Category)
     address = models.CharField(max_length=128, blank=True, null=True, default=None)
     coordinates_latitude = models.DecimalField(max_digits=8, decimal_places=6, default=0)
     coordinates_longtitude = models.DecimalField(max_digits=8, decimal_places=6, default=0)
@@ -47,7 +49,7 @@ class Promotion(models.Model):
 
 
 class PromotionImage(models.Model):
-    promotion = models.ForeignKey('Promotion')
+    promotion = models.ForeignKey(Promotion)
     image = models.ImageField(upload_to='promotions_img')
     is_main = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
@@ -56,7 +58,7 @@ class PromotionImage(models.Model):
 
 class Coupon(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    promotion = models.ForeignKey('Promotions')
+    promotion = models.ForeignKey(Promotion)
     name = models.CharField(max_length=128, blank=True, null=True, default=None)
     price_initial = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     price_discounted = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -70,12 +72,12 @@ class Coupon(models.Model):
 class ReviewItem(models.Model):
     name = models.CharField(max_length=128, blank=True, null=True, default=None)
     is_active = models.BooleanField(default=True)
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey(Category)
 
 
 class Review(models.Model):
     promotion = models.ForeignKey(Promotion)
-    user = models.ForeignKey('User')
+    user = models.ForeignKey(Profile)
     text = models.TextField()
     # calculated field
     rating_total = models.DecimalField(max_digits=10, decimal_places=0, default=0)
@@ -84,8 +86,8 @@ class Review(models.Model):
 
 
 class ReviewItemScore(models.Model):
-    review = models.ForeignKey('Review')
-    review_item = models.ForeignKey('ReviewItem')
+    review = models.ForeignKey(Review)
+    review_item = models.ForeignKey(ReviewItem)
     rating = models.DecimalField(max_digits=1, decimal_places=0, default=0)
     comment = models.TextField(blank=True, null=True, default=None)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)

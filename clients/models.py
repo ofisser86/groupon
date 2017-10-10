@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import Profile
-from promotions.models import Promotion
 
 
 # Create your models here.
@@ -16,5 +15,5 @@ class UserPromotionVisited(models.Model):
     user = models.ForeignKey(Profile)
     # if user is not authenticated
     session_key = models.CharField(max_length=128, blank=True, null=True, default=None)
-    promotion = models.ForeignKey(Promotion)
+    # promotion = models.ForeignKey(Promotion)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
